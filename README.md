@@ -26,7 +26,7 @@ Add Rajawali to RajawaliLiveWallpaperExtension as an Android Library Project
   * Alexis Lecanu alias Ravenfeld - [alexis.lecanu@gmail.com](mailto:alexis.lecanu@gmail.com)
     
 ## Tested 
-
+  * Galaxy S3
     
 ## Bugs
 
