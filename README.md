@@ -1,4 +1,4 @@
-#LiveWallpaperSlideshow
+#LiveWallpaperEye
 
 
 thanks to Rajawali
@@ -6,21 +6,21 @@ thanks to Rajawali
 
 ## Usage
 
-Please check out the [example project](https://github.com/ravenfeld/LiveWallpaperSlideshow/tree/master).
+Please check out the [example project](https://github.com/ravenfeld/LiveWallpaperEye/tree/master).
 
 
 ### How to integrate it ?
 
 #### Eclipse
- You have to [download it](https://github.com/ravenfeld/LiveWallpaperSlideshow/archive/master.zip) 
- You have to [download it](https://github.com/ravenfeld/aFileChooser/archive/dev.zip) 
- You have to [download it](https://github.com/ravenfeld/Rajawali/archive/master.zip) 
+ You have to [download it](https://github.com/ravenfeld/RajawaliLiveWallpaperExtension/archive/master.zip) 
  
- Import the **LiveWallpaperSlideshow-master** folder in your Eclipse.
+ You have to [download it](https://github.com/ravenfeld/Rajawali/archive/my-dev.zip) 
  
- Add aFileChooser to LiveWallpaperSlideshow as an Android Library Project
+ Import the **LiveWallpaperEye-master** folder in your Eclipse.
+ 
+Add Rajawali to RajawaliLiveWallpaperExtension as an Android Library Project
 
- Add Rajawali to LiveWallpaperSlideshow as an Android Library Project
+ Add RajawaliLiveWallpaperExtension to LiveWallpaperEye as an Android Library Project
    
 ## Developed by
   * Alexis Lecanu alias Ravenfeld - [alexis.lecanu@gmail.com](mailto:alexis.lecanu@gmail.com)
