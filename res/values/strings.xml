@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Application Name -->
+    <string name="app_name">LiveWallpaper Eye</string>
+
+    <!-- Name in Live Wallpaper Picker list -->
+    <string name="lwp_name">LiveWallpaper Eye</string>
+
+    <!-- Description in Live Wallpaper Picker list -->
+    <string name="lwp_desc">LiveWallpaper Eye, select a image and define as livewallpaper</string>
+
+    <!-- Author -->
+    <string name="lwp_author">Ravenfeld</string>
+    <string name="select">Choose \"</string>
+    <string name="select_end">\" from the list</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+
+
+</resources>
