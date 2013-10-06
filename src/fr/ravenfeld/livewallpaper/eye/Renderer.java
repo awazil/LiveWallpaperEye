@@ -57,7 +57,7 @@ public class Renderer extends RajawaliRenderer implements
             mEye = new Image("oeil", R.drawable.oeil,0.5f);
             mSprite = new ImageSpriteSheet(
                     "sprite",
-                    R.drawable.sprite,0.5f, 2, 2,  new long[]{150,150,7500});
+                    R.drawable.sprite,0.5f, 2, 2,  new long[]{150,150,150,7500});
             mSkin = new BackgroundFixed("peau", R.drawable.front);
         } catch (TextureException e) {
             e.printStackTrace();
