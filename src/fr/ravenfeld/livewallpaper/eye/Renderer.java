@@ -7,7 +7,11 @@ import fr.ravenfeld.livewallpaper.library.objects.simple.BackgroundFixed;
 import fr.ravenfeld.livewallpaper.library.objects.simple.Image;
 import fr.ravenfeld.livewallpaper.library.objects.simple.ImageSpriteSheet;
 import rajawali.Camera2D;
+import rajawali.animation.Animation3D;
+import rajawali.animation.TranslateAnimation3D;
 import rajawali.materials.textures.ATexture.TextureException;
+import rajawali.math.vector.Vector2;
+import rajawali.math.vector.Vector3;
 import rajawali.renderer.RajawaliRenderer;
 import rajawali.util.RajLog;
 
@@ -17,6 +21,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 import android.view.MotionEvent;
 
 
@@ -32,6 +37,8 @@ public class Renderer extends RajawaliRenderer implements
     private final float CENTER = 0.5f;
     private SensorManager mSensorManager;
     private float mGravity[];
+    private Animation3D mAnim;
+
     public Renderer(Context context) {
         super(context);
         mGravity = new float[2];
@@ -71,35 +78,68 @@ public class Renderer extends RajawaliRenderer implements
         super.onDrawFrame(glUnused);
 
         if (mEye != null && !mTouch) {
-            mEye.setPosition(mGravity[0], mGravity[1]);
+            moveEyeGravity(mGravity[0], mGravity[1]);
         }
+        //Log.e("TEST", "mEye position " + mEye.getObject3D().getPosition());
     }
 
     @Override
     public void onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
         if (mEye != null) {
-
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                mTouch=true;
-                moveEye(event.getX(),event.getY());
-                break;
-            case MotionEvent.ACTION_MOVE:
-                mTouch=true;
-                moveEye(event.getX(), event.getY());
-                break;
-            case MotionEvent.ACTION_UP:
-                moveEye(event.getX(), event.getY());
-                mTouch=false;
-                break;
-        }
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    mTouch=true;
+                    if(mAnim!=null){
+                        mAnim.pause();
+                    }
+                    moveAnimEyeTouch(event.getX(), event.getY(), 250);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    mTouch=true;
+                    if(mAnim==null || !mAnim.isPlaying()){
+                        moveAnimEyeTouch(event.getX(), event.getY(), 100);
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    if(mAnim!=null){
+                        mAnim.pause();
+                    }
+                    moveAnimEyeGravity(mGravity[0], mGravity[1], 500);
+                    mTouch=false;
+                    break;
+            }
         }
     }
 
-    private void moveEye(float x,float y){
+    private void moveEye(double x,double y, int duration){
+        mAnim = new TranslateAnimation3D(new Vector3(mEye.getObject3D().getPosition()), new Vector3(x,y, 0));
+        mAnim.setDuration(duration);
+        mAnim.setRepeatMode(Animation3D.RepeatMode.NONE);
+        mAnim.setTransformable3D(mEye.getObject3D());
+        registerAnimation(mAnim);
+        mAnim.play();
+    }
 
+    private void moveEyeGravity(float x,float y){
+        mEye.setPosition(x, y);
+    }
+
+    private void moveAnimEyeGravity(float x, float y, int duration){
+        moveEye(x,y,duration);
+    }
+
+    private void moveEyeTouch(float x,float y){
+        Vector2 position =touchPosition(x,y);
+        mEye.setPosition(position.getX(), position.getY());
+    }
+
+    private void moveAnimEyeTouch(float x, float y, int duration){
+        Vector2 position =touchPosition(x,y);
+        moveEye(position.getX(),position.getY(),duration);
+    }
+
+    private Vector2 touchPosition(float x, float y){
         float posX = x/mViewportWidth-CENTER;
         float posY =1-y/mViewportHeight-CENTER;
 
@@ -113,8 +153,7 @@ public class Renderer extends RajawaliRenderer implements
         }else{
             posY = Math.max(posY,-0.1f);
         }
-
-        mEye.setPosition(posX,posY);
+        return new Vector2(posX,posY);
     }
 
     @Override
