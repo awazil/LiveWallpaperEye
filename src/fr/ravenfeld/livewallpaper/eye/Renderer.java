@@ -22,14 +22,14 @@ import android.view.MotionEvent;
 
 public class Renderer extends RajawaliRenderer implements
         SensorEventListener {
-
+    private boolean mTouch=false;
     private Image mEye;
     private BackgroundFixed mSkin;
     private ImageSpriteSheet mSprite;
     private final int SENSITIVITY_X = 20;
     private final int SENSITIVITY_Y = 50;
     private final float ALPHA = 0.8f;
-
+    private final float CENTER = 0.5f;
     private SensorManager mSensorManager;
     private float mGravity[];
     public Renderer(Context context) {
@@ -55,9 +55,8 @@ public class Renderer extends RajawaliRenderer implements
 
         try {
             mEye = new Image("oeil", R.drawable.oeil,0.5f);
-            mSprite = new ImageSpriteSheet(
-                    "sprite",
-                    R.drawable.sprite,0.5f, 2, 2,  new long[]{150,150,150,7500});
+            mSprite = new ImageSpriteSheet( "sprite", R.drawable.sprite,0.5f, 4, 2,  new long[]{7000,50,50,50,50,50,50,75});
+            mSprite.setPingPong(true);
             mSkin = new BackgroundFixed("peau", R.drawable.front);
         } catch (TextureException e) {
             e.printStackTrace();
@@ -71,7 +70,7 @@ public class Renderer extends RajawaliRenderer implements
     public void onDrawFrame(GL10 glUnused) {
         super.onDrawFrame(glUnused);
 
-        if (mEye != null) {
+        if (mEye != null && !mTouch) {
             mEye.setPosition(mGravity[0], mGravity[1]);
         }
     }
@@ -79,6 +78,43 @@ public class Renderer extends RajawaliRenderer implements
     @Override
     public void onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
+        if (mEye != null) {
+
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mTouch=true;
+                moveEye(event.getX(),event.getY());
+                break;
+            case MotionEvent.ACTION_MOVE:
+                mTouch=true;
+                moveEye(event.getX(), event.getY());
+                break;
+            case MotionEvent.ACTION_UP:
+                moveEye(event.getX(), event.getY());
+                mTouch=false;
+                break;
+        }
+        }
+    }
+
+    private void moveEye(float x,float y){
+
+        float posX = x/mViewportWidth-CENTER;
+        float posY =1-y/mViewportHeight-CENTER;
+
+        if(posX>0){
+            posX = Math.min(posX,0.1f);
+        }else{
+            posX = Math.max(posX,-0.1f);
+        }
+        if(posY>0){
+            posY = Math.min(posY,0.1f);
+        }else{
+            posY = Math.max(posY,-0.1f);
+        }
+
+        mEye.setPosition(posX,posY);
     }
 
     @Override
