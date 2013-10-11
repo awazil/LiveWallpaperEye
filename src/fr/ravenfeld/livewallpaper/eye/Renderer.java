@@ -27,7 +27,7 @@ import android.view.MotionEvent;
 
 public class Renderer extends RajawaliRenderer implements
         SensorEventListener {
-    private boolean mTouch=false;
+    private boolean mTouch = false;
     private Image mEye;
     private BackgroundFixed mSkin;
     private ImageSpriteSheet mSprite;
@@ -61,8 +61,8 @@ public class Renderer extends RajawaliRenderer implements
         getCurrentCamera().setLookAt(0, 0, 0);
 
         try {
-            mEye = new Image("oeil", R.drawable.oeil,0.5f);
-            mSprite = new ImageSpriteSheet( "sprite", R.drawable.sprite,0.5f, 4, 2,  new long[]{7000,50,50,50,50,50,50,75});
+            mEye = new Image("oeil", R.drawable.oeil, 0.5f);
+            mSprite = new ImageSpriteSheet("sprite", R.drawable.sprite, 0.5f, 2, 2, new long[]{2000, 2000, 2000, 2000});
             mSprite.setPingPong(true);
             mSkin = new BackgroundFixed("peau", R.drawable.front);
         } catch (TextureException e) {
@@ -71,6 +71,7 @@ public class Renderer extends RajawaliRenderer implements
         addChild(mEye.getObject3D());
         addChild(mSprite.getObject3D());
         addChild(mSkin.getObject3D());
+
     }
 
     @Override
@@ -80,7 +81,6 @@ public class Renderer extends RajawaliRenderer implements
         if (mEye != null && !mTouch) {
             moveEyeGravity(mGravity[0], mGravity[1]);
         }
-        //Log.e("TEST", "mEye position " + mEye.getObject3D().getPosition());
     }
 
     @Override
@@ -89,31 +89,31 @@ public class Renderer extends RajawaliRenderer implements
         if (mEye != null) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    mTouch=true;
-                    if(mAnim!=null){
+                    mTouch = true;
+                    if (mAnim != null) {
                         mAnim.pause();
                     }
                     moveAnimEyeTouch(event.getX(), event.getY(), 250);
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    mTouch=true;
-                    if(mAnim==null || !mAnim.isPlaying()){
+                    mTouch = true;
+                    if (mAnim == null || !mAnim.isPlaying()) {
                         moveAnimEyeTouch(event.getX(), event.getY(), 100);
                     }
                     break;
                 case MotionEvent.ACTION_UP:
-                    if(mAnim!=null){
+                    if (mAnim != null) {
                         mAnim.pause();
                     }
                     moveAnimEyeGravity(mGravity[0], mGravity[1], 500);
-                    mTouch=false;
+                    mTouch = false;
                     break;
             }
         }
     }
 
-    private void moveEye(double x,double y, int duration){
-        mAnim = new TranslateAnimation3D(new Vector3(mEye.getObject3D().getPosition()), new Vector3(x,y, 0));
+    private void moveEye(double x, double y, int duration) {
+        mAnim = new TranslateAnimation3D(new Vector3(mEye.getObject3D().getPosition()), new Vector3(x, y, 0));
         mAnim.setDuration(duration);
         mAnim.setRepeatMode(Animation3D.RepeatMode.NONE);
         mAnim.setTransformable3D(mEye.getObject3D());
@@ -121,39 +121,42 @@ public class Renderer extends RajawaliRenderer implements
         mAnim.play();
     }
 
-    private void moveEyeGravity(float x,float y){
+    private void moveEyeGravity(float x, float y) {
         mEye.setPosition(x, y);
     }
 
-    private void moveAnimEyeGravity(float x, float y, int duration){
-        moveEye(x,y,duration);
+    private void moveAnimEyeGravity(float x, float y, int duration) {
+        moveEye(x, y, duration);
     }
 
-    private void moveEyeTouch(float x,float y){
-        Vector2 position =touchPosition(x,y);
+    private void moveEyeTouch(float x, float y) {
+        Vector2 position = touchPosition(x, y);
         mEye.setPosition(position.getX(), position.getY());
     }
 
-    private void moveAnimEyeTouch(float x, float y, int duration){
-        Vector2 position =touchPosition(x,y);
-        moveEye(position.getX(),position.getY(),duration);
+    private void moveAnimEyeTouch(float x, float y, int duration) {
+        Vector2 position = touchPosition(x, y);
+        moveEye(position.getX(), position.getY(), duration);
     }
 
-    private Vector2 touchPosition(float x, float y){
-        float posX = x/mViewportWidth-CENTER;
-        float posY =1-y/mViewportHeight-CENTER;
+    private Vector2 touchPosition(float x, float y) {
 
-        if(posX>0){
-            posX = Math.min(posX,0.1f);
-        }else{
-            posX = Math.max(posX,-0.1f);
+        float posX = x / mViewportWidth - CENTER;
+        float posY = 1 - y / mViewportHeight - CENTER;
+
+        float POS_X_MAX = 0.05f / ((float) mSkin.getHeight() / (float) mViewportHeight);
+        float POS_Y_MAX = 0.1f;
+        if (posX > 0) {
+            posX = Math.min(posX, POS_X_MAX);
+        } else {
+            posX = Math.max(posX, -POS_X_MAX);
         }
-        if(posY>0){
-            posY = Math.min(posY,0.1f);
-        }else{
-            posY = Math.max(posY,-0.1f);
+        if (posY > 0) {
+            posY = Math.min(posY, POS_Y_MAX);
+        } else {
+            posY = Math.max(posY, -POS_Y_MAX);
         }
-        return new Vector2(posX,posY);
+        return new Vector2(posX, posY);
     }
 
     @Override
@@ -185,11 +188,11 @@ public class Renderer extends RajawaliRenderer implements
                 mSprite.stopAnimation();
             }
         }
-        if(visible){
+        if (visible) {
             mSensorManager.registerListener(this,
                     mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                     SensorManager.SENSOR_DELAY_UI);
-        }else{
+        } else {
             mSensorManager.unregisterListener(this);
         }
 
@@ -199,7 +202,6 @@ public class Renderer extends RajawaliRenderer implements
     public void onSurfaceDestroyed() {
         super.onSurfaceDestroyed();
     }
-
 
 
     @Override
@@ -215,8 +217,13 @@ public class Renderer extends RajawaliRenderer implements
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            mGravity[0] = (ALPHA * mGravity[0] + (1 - ALPHA) * event.values[0])/SENSITIVITY_X;
-            mGravity[1] = (ALPHA * mGravity[1] + (1 - ALPHA) * event.values[1])/SENSITIVITY_Y;
+            if (mViewportWidth < mViewportHeight) {
+                mGravity[0] = (ALPHA * mGravity[0] + (1 - ALPHA) * event.values[0]) / SENSITIVITY_X;
+                mGravity[1] = (ALPHA * mGravity[1] + (1 - ALPHA) * event.values[1]) / SENSITIVITY_Y;
+            } else {
+                mGravity[0] = (ALPHA * mGravity[0] + (1 - ALPHA) * event.values[1]) / SENSITIVITY_X;
+                mGravity[1] = (ALPHA * mGravity[1] + (1 - ALPHA) * event.values[0]) / SENSITIVITY_Y;
+            }
         }
     }
 
