@@ -200,7 +200,22 @@ public class Renderer extends RajawaliRenderer implements
 
     @Override
     public void onSurfaceDestroyed() {
-        super.onSurfaceDestroyed();
+        try {
+            mEye.surfaceDestroyed();
+            mTextureManager.taskRemove(mEye.getTexture());
+            mMaterialManager.taskRemove(mEye.getMaterial());
+
+            mSprite.surfaceDestroyed();
+            mTextureManager.taskRemove(mSprite.getTexture());
+            mMaterialManager.taskRemove(mSprite.getMaterial());
+
+            mSkin.surfaceDestroyed();
+            mTextureManager.taskRemove(mSkin.getTexture());
+            mMaterialManager.taskRemove(mSkin.getMaterial());
+
+        } catch (TextureException e) {
+            e.printStackTrace();
+        }
     }
 
 
